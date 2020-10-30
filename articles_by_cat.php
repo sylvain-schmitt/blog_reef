@@ -1,22 +1,18 @@
 <?php
-$title = "Reef-Blog";
-
 // On démarre une session
-session_start();
 
 require('helpers/function.php');
 
-
-//recupère tous les articles
-$posts = Articles();
-
 $articles = LastArticle();
 
-//recupère les articles par catégorie
 $posts = ArticlesByCat();
 
 $cats = selectCategory();
 
+
+$posts = RecupArtCat();
+$cate = RecupCat();
+$title = RecupTitle();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -115,7 +111,7 @@ $cats = selectCategory();
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 mt30 wow text-center">
-                    <h2 class="section-heading">Reef-Aquarium</h2>
+                    <h2 class="section-heading"><?= $cate['category_name']?></h2>
                 </div>
             </div>
         </div>
@@ -140,7 +136,7 @@ $cats = selectCategory();
                             </div>
                             <h2 class="post-title"><?= $post['title'] ?></h2>
                             <div class="item-metas text-muted mb30">
-                                <span class="meta-item"><i class="pe-icon pe-7s-folder"></i> Publié Dans <span><?= $post['category_name'] ?></span></span>
+                                <span class="meta-item"><i class="pe-icon pe-7s-folder"></i> Publié Dans <span><?=  $cate['category_name'] ?></span></span>
                                 <span class="meta-item"><i class="pe-icon pe-7s-date"></i> Le <span><?= $post['created_at'] ?></span></span>
                             </div>
                             <p><?= excerpt($post['content']) ?></p>
@@ -149,6 +145,9 @@ $cats = selectCategory();
                     </div>
                 </div>
             <?php endforeach ?>
+            </div>
+            <div class="row paging text-center">
+                <a class="btn btn-primary mt30" href="list_articles.php">tous les articles</a>
             </div>
         </div>
     </div>
@@ -251,7 +250,7 @@ $cats = selectCategory();
             <h4 class="widget-title"><strong>Articles Par Catégorie</strong></h4>
             <div class="tagcloud">
             <?php foreach($cats as $cat ): ?>
-                    <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
+                <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
             <?php endforeach ?> 
         </div>
         </div>

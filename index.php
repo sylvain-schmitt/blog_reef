@@ -4,15 +4,16 @@ $title = "Reef-Blog";
 // On démarre une session
 session_start();
 
-//require_once('db/connect.php');
 require('helpers/function.php');
-
- //recupère les catégories
-$categorys = selectCategory();
 
 //recupère les 2 dernier articles
 $articles = LastArticle();
-//require_once('db/close.php');
+
+$posts = ArticlesByCat();
+
+$cats = selectCategory();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -96,7 +97,7 @@ $articles = LastArticle();
                             <a href="index.php" class="dropdown-toggle">Acceuil <span class="pe-7s-angle-down"></span></a>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle">Articles <span class="pe-7s-angle-down"></span></a>
+                            <a href="list_articles.php" class="dropdown-toggle">Articles <span class="pe-7s-angle-down"></span></a>
                         </li>
                         <li><a href="javascript:void(0);" class="side-menu-trigger hidden-xs"><i class="fa fa-bars"></i></a></li>
                     </ul>
@@ -148,7 +149,7 @@ $articles = LastArticle();
             </div>
 
             <div class="row paging text-center">
-                <a class="btn btn-primary mt30" href="#">tous les articles</a>
+                <a class="btn btn-primary mt30" href="list_articles.php">tous les articles</a>
             </div>
         </div>
     </div>
@@ -186,9 +187,9 @@ $articles = LastArticle();
                     <div class="widget">
                         <h4 class="widget-title"><strong>Articles</strong> par catégorie</h4>
                         <div class="tagcloud">
-                        <?php foreach($categorys as $category ): ?>
-                            <a href="#" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $category['id'] ?>" title="<?= $category['category_name']?>"><?= $category['category_name']?></a>
-                        <?php endforeach ?>
+                        <?php foreach($cats as $cat ): ?>
+                            <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
+                        <?php endforeach ?> 
                         </div>
                     </div>
                 </div>
@@ -248,10 +249,10 @@ $articles = LastArticle();
             </div>
         </div>
         <div class="widget mb50">
-            <h4 class="widget-title"><strong> Par Catégorie</strong></h4>
+            <h4 class="widget-title"><strong>Articles Par Catégorie</strong></h4>
             <div class="tagcloud">
-            <?php foreach($categorys as $category ): ?>
-                <a href="#" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $category['id'] ?>" title="<?= $category['category_name']?>"><?= $category['category_name']?></a>
+            <?php foreach($cats as $cat ): ?>
+                <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
             <?php endforeach ?>           
         </div>
         </div>

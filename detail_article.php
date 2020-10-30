@@ -4,11 +4,9 @@ session_start();
 require('helpers/function.php');
 
 $articles = LastArticle();
-$categorys = selectCategory();
-
-
-// Est-ce que le existe et n'est pas vide dans l'URL
-if (isset($_GET['slug']) && !empty($_GET['slug'])) {
+$cats = selectCategory();
+ // Est-ce que le existe et n'est pas vide dans l'URL
+ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
     require_once('db/connect.php');
 
     // On nettoie le slug envoyé
@@ -19,7 +17,7 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
     // On prépare la requête
     $query = $db->prepare($sql);
 
-    // On "accroche" les paramètre (id)
+    // On "accroche" les paramètre (slug)
     $query->bindValue(':slug', $slug, PDO::PARAM_STR);
 
     // On exécute la requête
@@ -29,14 +27,13 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
     $article = $query->fetch();
 
     $cat_id = $article['category_id'];
-    $category = "SELECT category_name FROM category WHERE id = $cat_id";
-    $req = $db->prepare($category);
-    $req->execute();
-    $cat = $req->fetch();
-
-    $title =  $article['title'] ;    
-} 
-
+        $category = "SELECT category_name FROM category WHERE id = $cat_id";
+        $req = $db->prepare($category);
+        $req->execute();
+        $cat = $req->fetch();
+        $titles =  $cat['category_name'] ; 
+ }
+    $title = $titles;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -120,7 +117,7 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
                             <a href="index.php" class="dropdown-toggle">Acceuil <span class="pe-7s-angle-down"></span></a>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle">Articles <span class="pe-7s-angle-down"></span></a>
+                            <a href="list_articles.php" class="dropdown-toggle">Articles <span class="pe-7s-angle-down"></span></a>
                         </li>
                         <li><a href="javascript:void(0);" class="side-menu-trigger hidden-xs"><i class="fa fa-bars"></i></a></li>
                     </ul>
@@ -135,7 +132,7 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 mt30 wow text-center">
-                    <h2 class="section-heading">Reef-Aquarium</h2>
+                    <h2 class="section-heading"><?= $article['title'] ?></h2>
                 </div>
             </div>
         </div>
@@ -251,7 +248,7 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
                                     <img class="widget-img" src="https://picsum.photos/60/60" alt="thumbnail">
                                 </div>
                                 <div class="media-body">
-                                    <span class="media-heading"><a href="article/detail_article.php"><?= $article['title'] ?></a></span>
+                                    <span class="media-heading"><a href="detail_article.php?slug=<?= $article['slug'] ?>"><?= $article['title'] ?></a></span>
                                     <small class="muted">Publier le <?= $article['created_at'] ?></small>
                                 </div>
                             </div>
@@ -263,10 +260,9 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
                     <div class="widget">
                         <h4 class="widget-title"><strong>Articles</strong> par catégorie</h4>
                         <div class="tagcloud">
-                        <?php foreach($categorys as $category ): ?>
-                            <a href="#" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $category['id'] ?>" title="<?= $category['category_name']?>"><?= $category['category_name']?></a>
-                        <?php endforeach ?>
-                        </div>
+                        <?php foreach($cats as $cat ): ?>
+                            <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
+                        <?php endforeach ?>                         </div>
                     </div>
                 </div>
             </div>
@@ -317,7 +313,7 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
                         <img class="widget-img" src="https://picsum.photos/60/60" alt="thumbnail">
                     </div>
                     <div class="media-body">
-                        <span class="media-heading"><a href="article/detail_article.php"><?= $article['title'] ?></a></span>
+                        <span class="media-heading"><a href="detail_article.php?slug=<?= $article['slug'] ?>"><?= $article['title'] ?></a></span>
                         <small class="muted">Publier le <?= $article['created_at'] ?></small>
                     </div>
                 </div>
@@ -325,11 +321,11 @@ if (isset($_GET['slug']) && !empty($_GET['slug'])) {
             </div>
         </div>
         <div class="widget mb50">
-            <h4 class="widget-title"><strong> Par Catégorie</strong></h4>
+            <h4 class="widget-title"><strong>Articles Par Catégorie</strong></h4>
             <div class="tagcloud">
-            <?php foreach($categorys as $category ): ?>
-                <a href="#" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $category['id'] ?>" title="<?= $category['category_name']?>"><?= $category['category_name']?></a>
-            <?php endforeach ?>           
+            <?php foreach($cats as $cat ): ?>
+                <a href="articles_by_cat.php?category_id=<?= $cat['id'] ?>" class="tag-link btn btn-theme btn-white btn-xs smoothie" value ="<?= $articles['category_id'] ?>" title="<?= $cat['category_name']?>"><?= $cat['category_name']?></a>
+            <?php endforeach ?>        
         </div>
         </div>
         <div class="widget about-us-widget mb50">
