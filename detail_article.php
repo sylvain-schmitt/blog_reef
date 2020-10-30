@@ -1,18 +1,42 @@
 <?php
-$title = "Reef-Blog";
-
 // On démarre une session
 session_start();
-
-//require_once('db/connect.php');
 require('helpers/function.php');
 
- //recupère les catégories
+$articles = LastArticle();
 $categorys = selectCategory();
 
-//recupère les 2 dernier articles
-$articles = LastArticle();
-//require_once('db/close.php');
+
+// Est-ce que le existe et n'est pas vide dans l'URL
+if (isset($_GET['slug']) && !empty($_GET['slug'])) {
+    require_once('db/connect.php');
+
+    // On nettoie le slug envoyé
+    $slug = strip_tags($_GET['slug']);
+
+    $sql = "SELECT * FROM  articles  WHERE  slug = :slug ";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On "accroche" les paramètre (id)
+    $query->bindValue(':slug', $slug, PDO::PARAM_STR);
+
+    // On exécute la requête
+    $query->execute();
+
+    // On récupère l'article'
+    $article = $query->fetch();
+
+    $cat_id = $article['category_id'];
+    $category = "SELECT category_name FROM category WHERE id = $cat_id";
+    $req = $db->prepare($category);
+    $req->execute();
+    $cat = $req->fetch();
+
+    $title =  $article['title'] ;    
+} 
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -119,40 +143,93 @@ $articles = LastArticle();
 </section>
 
 <section>
-    <div class="section-inner">
-        <div class="container">
-            <div class="row">
-
-            <?php foreach($articles as $article):?>
-                <div class="col-sm-10 col-sm-offset-1 blog-item mb100 wow match-height">
+            <div class="section-inner">
+                <div class="container">
                     <div class="row">
-                        <div class="col-xs-12">
-                            <div class="hover-item mb30">
-                                <img src="https://picsum.photos/1200/560" class="img-responsive smoothie" alt="title">
-                                <div class="overlay-item-caption smoothie"></div>
-                                <div class="hover-item-caption smoothie">
-                                    <h3 class="vertical-center smoothie"><a href="detail_article.php?slug=<?= $article['slug'] ?>" class="smoothie btn btn-primary page-scroll" title="voir l'article">Voir</a></h3>
+                        <div id="post-content" class="col-sm-8 col-sm-offset-2 blog-item mb60 wow">
+                            <div class="row">
+                                <div class="col-sm-12 single-post-content">
+                                    <p><?= $article['content'] ?></p>
+                                    <div data-easyshare data-easyshare-url="https://reef-aquarium.com ">
+                                        <!-- Total -->
+                                        <button data-easyshare-button="total">
+                                            <span>Total</span>
+                                        </button>
+                                        <span data-easyshare-total-count>0</span>
+
+                                        <!-- Facebook -->
+                                        <button data-easyshare-button="facebook">
+                                            <span>Share</span>
+                                        </button>
+                                        <span data-easyshare-button-count="facebook">0</span>
+
+                                        <!-- Twitter -->
+                                        <button data-easyshare-button="twitter" data-easyshare-tweet-text="">
+                                            <span>Tweet</span>
+                                        </button>
+                                        <span data-easyshare-button-count="twitter">0</span>
+
+                                        <!-- Google+ -->
+                                        <button data-easyshare-button="google">
+                                            <span>+1</span>
+                                        </button>
+                                        <span data-easyshare-button-count="google">0</span>
+
+                                        <div data-easyshare-loader>Loading...</div>
+                                    </div>
                                 </div>
                             </div>
-                            <h2 class="post-title"><?= $article['title'] ?></h2>
-                            <div class="item-metas text-muted mb30">
-                                <span class="meta-item"><i class="pe-icon pe-7s-folder"></i> Publié Dans <span><?= $article['category_name'] ?></span></span>
-                                <span class="meta-item"><i class="pe-icon pe-7s-date"></i> Le <span><?= $article['created_at'] ?></span></span>
+                        </div>
+
+        </section>
+
+        <section class="dark-wrapper opaqued parallax" data-parallax="scroll" data-image-src="assets/img/bg/bg6.jpg" data-speed="0.7">
+            <div id="contact-tabs" role="tabpanel">
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-justified icon-tabs" id="nav-tabs" role="tablist">
+                    <li role="presentation" class="ptb smoothie active">
+                        <a href="#contact1" aria-controls="contact1" role="tab" data-toggle="tab">
+                            <span class="tabtitle heading-font smoothie text-right">Contacter Nous</span>
+                        </a>
+                    </li>
+                    <li role="presentation" class="ptb smoothie">
+                        <a href="#contact2" aria-controls="contact2" role="tab" data-toggle="tab">
+                            <span class="tabtitle heading-font smoothie text-left">Localiser Nous</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content" id="tabs-collapse">
+                    <div role="tabpanel" class="tab-pane fade in active" id="contact1">
+                        <div id="contact-inner" class="nopadding-lr">
+                            <div class="contact-section-inner">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-8 col-sm-offset-2">
+                                            <div id="message"></div>
+                                            <form method="post" action="sendemail.php" id="contactform" class="main-contact-form wow">
+                                                <input type="text" class="form-control col-md-4" name="name2" placeholder="Votre Nom *" id="name" required data-validation-required-message="S'il vous plais veuillez rensseigner votre nom." />
+                                                <input type="text" class="form-control col-md-4" name="email" placeholder="Votre Email *" id="email" required data-validation-required-message="S'il vous plais veuillez rensseigner votre adresse email." />
+                                                <textarea name="comments" class="form-control" id="comments" placeholder="Votre Message *" required data-validation-required-message="S'il vous plais veuillez rensseigner votre message."></textarea>
+                                                <input class="btn btn-primary mt30 btn-white pull-right" type="submit" name="Submit" value="Envoyer" />
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <p><?= excerpt($article['content']) ?></p>
-                            <a class="btn btn-primary mt30" href="detail_article.php?slug=<?= $article['slug'] ?>">Lire la suite</a>
                         </div>
                     </div>
-                </div>
-            <?php endforeach ?>
-            </div>
 
-            <div class="row paging text-center">
-                <a class="btn btn-primary mt30" href="#">tous les articles</a>
+                    <div role="tabpanel" class="tab-pane fade" id="contact2">
+                        <div id="mapwrapper"></div>
+                    </div>
+
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
+
 
 <section class="dark-wrapper">
     <div class="section-inner">
@@ -174,7 +251,7 @@ $articles = LastArticle();
                                     <img class="widget-img" src="https://picsum.photos/60/60" alt="thumbnail">
                                 </div>
                                 <div class="media-body">
-                                    <span class="media-heading"><a href="detail_article.php?slug=<?= $article['slug'] ?>"><?= $article['title'] ?></a></span>
+                                    <span class="media-heading"><a href="article/detail_article.php"><?= $article['title'] ?></a></span>
                                     <small class="muted">Publier le <?= $article['created_at'] ?></small>
                                 </div>
                             </div>
@@ -240,7 +317,7 @@ $articles = LastArticle();
                         <img class="widget-img" src="https://picsum.photos/60/60" alt="thumbnail">
                     </div>
                     <div class="media-body">
-                        <span class="media-heading"><a href="detail_article.php?slug=<?= $article['slug'] ?>"><?= $article['title'] ?></a></span>
+                        <span class="media-heading"><a href="article/detail_article.php"><?= $article['title'] ?></a></span>
                         <small class="muted">Publier le <?= $article['created_at'] ?></small>
                     </div>
                 </div>

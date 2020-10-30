@@ -10,8 +10,11 @@ require('helpers/function.php');
  //recupère les catégories
 $categorys = selectCategory();
 
-//recupère les 2 dernier articles
+//recupère tous les articles
+$posts = Articles();
+
 $articles = LastArticle();
+
 //require_once('db/close.php');
 ?>
 <!DOCTYPE html>
@@ -123,7 +126,7 @@ $articles = LastArticle();
         <div class="container">
             <div class="row">
 
-            <?php foreach($articles as $article):?>
+            <?php foreach($posts as $post):?>
                 <div class="col-sm-10 col-sm-offset-1 blog-item mb100 wow match-height">
                     <div class="row">
                         <div class="col-xs-12">
@@ -131,24 +134,20 @@ $articles = LastArticle();
                                 <img src="https://picsum.photos/1200/560" class="img-responsive smoothie" alt="title">
                                 <div class="overlay-item-caption smoothie"></div>
                                 <div class="hover-item-caption smoothie">
-                                    <h3 class="vertical-center smoothie"><a href="detail_article.php?slug=<?= $article['slug'] ?>" class="smoothie btn btn-primary page-scroll" title="voir l'article">Voir</a></h3>
+                                    <h3 class="vertical-center smoothie"><a href="detail_article.php?slug=<?= $post['slug'] ?>" class="smoothie btn btn-primary page-scroll" title="voir l'article">Voir</a></h3>
                                 </div>
                             </div>
-                            <h2 class="post-title"><?= $article['title'] ?></h2>
+                            <h2 class="post-title"><?= $post['title'] ?></h2>
                             <div class="item-metas text-muted mb30">
-                                <span class="meta-item"><i class="pe-icon pe-7s-folder"></i> Publié Dans <span><?= $article['category_name'] ?></span></span>
-                                <span class="meta-item"><i class="pe-icon pe-7s-date"></i> Le <span><?= $article['created_at'] ?></span></span>
+                                <span class="meta-item"><i class="pe-icon pe-7s-folder"></i> Publié Dans <span><?= $post['category_name'] ?></span></span>
+                                <span class="meta-item"><i class="pe-icon pe-7s-date"></i> Le <span><?= $post['created_at'] ?></span></span>
                             </div>
-                            <p><?= excerpt($article['content']) ?></p>
-                            <a class="btn btn-primary mt30" href="detail_article.php?slug=<?= $article['slug'] ?>">Lire la suite</a>
+                            <p><?= excerpt($post['content']) ?></p>
+                            <a class="btn btn-primary mt30" href="detail_article.php?slug=<?= $post['slug'] ?>">Lire la suite</a>
                         </div>
                     </div>
                 </div>
             <?php endforeach ?>
-            </div>
-
-            <div class="row paging text-center">
-                <a class="btn btn-primary mt30" href="#">tous les articles</a>
             </div>
         </div>
     </div>

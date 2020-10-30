@@ -1,4 +1,5 @@
 <?php
+
 function slugify($string, $delimiter = '-') {
     $oldLocale = setlocale(LC_ALL, '0');
     setlocale(LC_ALL, 'en_US.UTF-8');
@@ -71,3 +72,51 @@ function excerpt(string $content, int $limit = 60)
         $lastSpace = mb_strpos($content, ' ', $limit);
         return mb_substr($content, 0, $lastSpace) . ' ...';
     }
+
+function LastArticle()
+{
+    try{
+        // Connexion à la base
+        $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
+        $db->exec('SET NAMES "UTF8"');
+    } catch (PDOException $e){
+        echo 'Erreur : '. $e->getMessage();
+        die();
+    }
+        // selection de toutes les colonnes de la table category et articles avec jointure de category.id
+    $sql = "SELECT * FROM category, articles  WHERE articles.category_id = category.id ORDER BY created_at DESC LIMIT 2";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute la requête
+    $query->execute();
+
+    // On stocke le résultat dans un tableau associatif
+    $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+    return $articles;
+
+}
+
+function Articles()
+{
+    try{
+        // Connexion à la base
+        $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
+        $db->exec('SET NAMES "UTF8"');
+    } catch (PDOException $e){
+        echo 'Erreur : '. $e->getMessage();
+        die();
+    }
+        // selection de toutes les colonnes de la table category et articles avec jointure de category.id
+    $sql = "SELECT * FROM category, articles  WHERE articles.category_id = category.id ORDER BY created_at DESC";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute la requête
+    $query->execute();
+
+    // On stocke le résultat dans un tableau associatif
+    $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+    return $articles;
+
+}
