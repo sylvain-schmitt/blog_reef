@@ -32,6 +32,7 @@ $cats = selectCategory();
         $req->execute();
         $cat = $req->fetch();
         $titles =  $cat['category_name'] ; 
+        require_once('db/close.php');
  }
     $title = $titles;
 ?>

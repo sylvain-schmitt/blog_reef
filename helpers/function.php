@@ -13,12 +13,12 @@ function slugify($string, $delimiter = '-') {
 }
 
 function selectCategory() {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
 
@@ -39,14 +39,15 @@ function selectCategory() {
 }
 
 function RecupArtCat() {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
+
 
     if(isset($_GET['category_id']) && !empty($_GET['category_id'])){
         
@@ -58,7 +59,7 @@ function RecupArtCat() {
         
         // On stocke le résultat dans un tableau associatif
             $posts = $query->fetchAll(PDO::FETCH_ASSOC);
-            
+            $db = null;
         }
         return $posts;        
        
@@ -66,19 +67,21 @@ function RecupArtCat() {
 
 function RecupCat ()
 {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
+
     if(isset($_GET['category_id']) && !empty($_GET['category_id'])){
     $cat = "SELECT category_name FROM category WHERE id = $_GET[category_id]";
     $req = $db->prepare($cat);
     $req->execute();
     $cate = $req->fetch();
+    $db = null;
     }
     return $cate;
 
@@ -86,20 +89,22 @@ function RecupCat ()
 
 function RecupTitle()
 {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
+
     if(isset($_GET['category_id']) && !empty($_GET['category_id'])){
         $cat = "SELECT category_name FROM category WHERE id = $_GET[category_id]";
         $req = $db->prepare($cat);
         $req->execute();
         $cate = $req->fetch();
         $titles =  $cate['category_name'];
+        $db = null;
         }
         return $titles;
     
@@ -116,14 +121,15 @@ function excerpt(string $content, int $limit = 60)
 
 function LastArticle()
 {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
+
         // selection de toutes les colonnes de la table category et articles avec jointure de category.id
     $sql = "SELECT * FROM category, articles  WHERE articles.category_id = category.id ORDER BY created_at DESC LIMIT 2";
     // On prépare la requête
@@ -134,20 +140,22 @@ function LastArticle()
 
     // On stocke le résultat dans un tableau associatif
     $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = null;
     return $articles;
 
 }
 
 function Articles()
 {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
+
         // selection de toutes les colonnes de la table category et articles avec jointure de category.id
     $sql = "SELECT * FROM category, articles  WHERE articles.category_id = category.id ORDER BY created_at DESC";
     // On prépare la requête
@@ -158,18 +166,19 @@ function Articles()
 
     // On stocke le résultat dans un tableau associatif
     $articles = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = null;
     return $articles;
 
 }
 
 function ArticlesByCat ()
 {
-    try{
+    try {
         // Connexion à la base
         $db = new PDO('mysql:host=localhost;dbname=blog', 'root', '');
         $db->exec('SET NAMES "UTF8"');
-    } catch (PDOException $e){
-        echo 'Erreur : '. $e->getMessage();
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
         die();
     }
     // selection de toutes les colonnes de la table category et articles avec jointure de category.id 
@@ -182,6 +191,7 @@ function ArticlesByCat ()
     
     // On stocke le résultat dans un tableau associatif
     $articlesByCat = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = null;
     return $articlesByCat;
     
 }
