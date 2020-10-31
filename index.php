@@ -125,7 +125,7 @@ $cats = selectCategory();
             <div class="row">
 
             <?php foreach($articles as $article):?>
-                <div class="col-sm-10 col-sm-offset-1 blog-item mb100 wow match-height">
+                <div class="col-md-4 col-sm-offset-1 blog-item mb100 wow match-height">
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="hover-item mb30">
